@@ -1,0 +1,246 @@
+cmake_minimum_required(VERSION 3.30)
+project(SIDM_mod_g4)
+
+set(CMAKE_CXX_STANDARD 11)
+
+# 1) Find MPI for C
+find_package(MPI REQUIRED C)
+
+# 2) Find GSL
+find_package(GSL REQUIRED)
+
+include_directories(documentation/img)
+include_directories(buildsystem)
+include_directories(examples/G2-galaxy)
+include_directories(examples/SantaBarbara-PSPH-64)
+include_directories(examples/CollidingGalaxiesSFR)
+include_directories(examples/DM-L50-N128)
+include_directories(examples/DM-Zoom-Aq-C-5)
+include_directories(examples/G2-gassphere/ppm_profile)
+include_directories(examples/G2-cluster)
+include_directories(examples/G2-lcdm-gas)
+include_directories(data)
+include_directories(src/pm)
+include_directories(src/tree)
+include_directories(src/gravity)
+include_directories(src/sort)
+include_directories(src/ngbtree)
+include_directories(src/mpi_utils)
+include_directories(src/io)
+include_directories(src/half)
+include_directories(src/time_integration)
+include_directories(src/sph)
+include_directories(src/system)
+include_directories(src/gravtree)
+include_directories(src/mergertree)
+include_directories(src/logs)
+include_directories(src/ngenic)
+include_directories(src/fof)
+include_directories(src/vectorclass)
+include_directories(src/lightcone)
+include_directories(src/subfind)
+include_directories(src/cooling_sfr)
+include_directories(src/fmm)
+include_directories(src/main)
+include_directories(src/data)
+include_directories(src/debug_md5)
+include_directories(src/domain)
+include_directories(src/gitversion)
+
+add_executable(SIDM_mod_g4
+        src/pm/pm.h
+        src/pm/pm_nonperiodic.h
+        src/pm/pm_mpi_fft.h
+        src/pm/pm_nonperiodic.cc
+        src/pm/pm_mpi_fft.cc
+        src/pm/pm_periodic.h
+        src/pm/pm_periodic.cc
+        src/tree/tree.h
+        src/tree/tree.cc
+        src/gravity/grav_direct.cc
+        src/gravity/ewald.h
+        src/gravity/gravity.cc
+        src/gravity/second_order_ics.cc
+        src/gravity/grav_forcetest.h
+        src/gravity/ewaldtensors.h
+        src/gravity/ewald.cc
+        src/gravity/grav_external.cc
+        src/gravity/ewald_test.cc
+        src/gravity/grav_forcetest.cc
+        src/sort/cxxsort.h
+        src/sort/peano.h
+        src/sort/peano.cc
+        src/sort/parallel_sort.h
+        src/ngbtree/ngbtree_build.cc
+        src/ngbtree/ngbtree.h
+        src/mpi_utils/shared_mem_handler.h
+        src/mpi_utils/mpi_vars.cc
+        src/mpi_utils/allreduce_sparse_double_sum.cc
+        src/mpi_utils/generic_comm.h
+        src/mpi_utils/myalltoall.cc
+        src/mpi_utils/hypercube_allgatherv.cc
+        src/mpi_utils/shared_mem_handler.cc
+        src/mpi_utils/mpi_types.cc
+        src/mpi_utils/sums_and_minmax.cc
+        src/mpi_utils/sizelimited_sendrecv.cc
+        src/mpi_utils/healthtest.cc
+        src/mpi_utils/allreduce_debugcheck.cc
+        src/mpi_utils/setcomm.h
+        src/mpi_utils/mpi_utils.h
+        src/io/restart.cc
+        src/io/hdf5_util.cc
+        src/io/test_io_bandwidth.cc
+        src/io/parameters.cc
+        src/io/test_io_bandwidth.h
+        src/io/snap_io.h
+        src/io/io.cc
+        src/io/parameters.h
+        src/io/restart.h
+        src/io/hdf5_util.h
+        src/io/io.h
+        src/io/snap_io.cc
+        src/io/io_streamcount.h
+        src/time_integration/driftfac.cc
+        src/time_integration/timestep.cc
+        src/time_integration/kicks.cc
+        src/time_integration/timestep.h
+        src/time_integration/driftfac.h
+        src/time_integration/predict.cc
+        src/time_integration/timestep_treebased.cc
+        src/sph/artificial_viscosity.cc
+        src/sph/density.cc
+        src/sph/sph.h
+        src/sph/kernel.h
+        src/sph/hydra.cc
+        src/sph/init_entropy.cc
+        src/system/pinning.h
+        src/system/pinning.cc
+        src/system/system.h
+        src/system/system.cc
+        src/gravtree/gravtree_build.cc
+        src/gravtree/gravtree.h
+        src/gravtree/gravtree.cc
+        src/gravtree/gwalk.h
+        src/gravtree/gwalk.cc
+        src/mergertree/descendant.cc
+        src/mergertree/io_treelinks.h
+        src/mergertree/postproc_descendants.cc
+        src/mergertree/io_descendant.cc
+        src/mergertree/io_readsnap.h
+        src/mergertree/io_readtrees_mbound.h
+        src/mergertree/io_readsnap.cc
+        src/mergertree/io_readtrees_mbound.cc
+        src/mergertree/io_treelinks.cc
+        src/mergertree/rearrange.cc
+        src/mergertree/io_halotrees.cc
+        src/mergertree/io_halotrees.h
+        src/mergertree/halotrees.cc
+        src/mergertree/mergertree.h
+        src/mergertree/io_progenitors.cc
+        src/mergertree/io_progenitors.h
+        src/mergertree/io_descendant.h
+        src/logs/logs.cc
+        src/logs/logs.h
+        src/logs/timer.h
+        src/ngenic/power.cc
+        src/ngenic/ngenic.cc
+        src/ngenic/grid.cc
+        src/ngenic/ngenic.h
+        src/fof/fof_findgroups.cc
+        src/fof/foftree.h
+        src/fof/foftree_build.cc
+        src/fof/fof_io.h
+        src/fof/fof_nearest.cc
+        src/fof/fof.h
+        src/fof/fof.cc
+        src/fof/fof_io.cc
+        src/vectorclass/vectori256e.h
+        src/vectorclass/vectormath_exp.h
+        src/vectorclass/vectorclass.h
+        src/vectorclass/vectorf512.h
+        src/vectorclass/vectori512e.h
+        src/vectorclass/vectormath_lib.h
+        src/vectorclass/vectormath_trig.h
+        src/vectorclass/vectorf256.h
+        src/vectorclass/vectormath_common.h
+        src/vectorclass/vectori128.h
+        src/vectorclass/vectori256.h
+        src/vectorclass/vectorf128.h
+        src/vectorclass/vectori512.h
+        src/vectorclass/vectorf256e.h
+        src/vectorclass/vectormath_hyp.h
+        src/vectorclass/instrset.h
+        src/vectorclass/vectorf512e.h
+        src/lightcone/lightcone.cc
+        src/lightcone/lightcone_particle_io.cc
+        src/lightcone/lightcone_particle_io.h
+        src/lightcone/lightcone_massmap_io.h
+        src/lightcone/lightcone.h
+        src/lightcone/lightcone_massmap_io.cc
+        src/subfind/subfind_history.cc
+        src/subfind/subfind_distribute.cc
+        src/subfind/subfind.h
+        src/subfind/subfind.cc
+        src/subfind/subfind_properties.cc
+        src/subfind/subfind_nearesttwo.cc
+        src/subfind/subfind_readid_io.h
+        src/subfind/subfind_so.cc
+        src/subfind/subfind_density.cc
+        src/subfind/subfind_findlinkngb.cc
+        src/subfind/subfind_excursionset.cc
+        src/subfind/subfind_unbind.cc
+        src/subfind/subfind_orphanids.cc
+        src/subfind/subfind_processing.cc
+        src/subfind/subfind_readid_io.cc
+        src/subfind/subfind_treepotential.cc
+        src/cooling_sfr/cooling.h
+        src/cooling_sfr/sfr_eos.cc
+        src/cooling_sfr/starformation.cc
+        src/cooling_sfr/cooling.cc
+        src/fmm/fmm.h
+        src/fmm/fmm.cc
+        src/main/main.cc
+        src/main/main.h
+        src/main/init.cc
+        src/main/simulation.h
+        src/main/begrun.cc
+        src/main/run.cc
+        src/data/symtensors.h
+        src/data/dtypes.h
+        src/data/lcparticles.h
+        src/data/allvars.cc
+        src/data/simparticles.h
+        src/data/sph_particle_data.h
+        src/data/mymalloc.cc
+        src/data/mmparticles.h
+        src/data/allvars.h
+        src/data/particle_data.h
+        src/data/lightcone_particle_data.h
+        src/data/constants.h
+        src/data/intposconvert.h
+        src/data/test_symtensors.cc
+        src/data/macros.h
+        src/data/lightcone_massmap_data.h
+        src/data/symtensor_indices.h
+        src/data/mymalloc.h
+        src/data/idstorage.h
+        src/debug_md5/Md5.cc
+        src/debug_md5/Md5.h
+        src/debug_md5/calc_checksum.cc
+        src/domain/domain_exchange.cc
+        src/domain/domain_toplevel.cc
+        src/domain/domain.h
+        src/domain/domain_box.cc
+        src/domain/domain_balance.cc
+        src/domain/domain.cc
+        src/gitversion/version.h
+)
+
+# Link your target with MPI (C interface) and GSL libraries
+target_link_libraries(
+        SIDM_mod_g4
+        PRIVATE
+        MPI::MPI_C         # From find_package(MPI ...)
+        GSL::gsl           # From find_package(GSL ...)
+        GSL::gslcblas      # GSL's CBLAS component
+)
